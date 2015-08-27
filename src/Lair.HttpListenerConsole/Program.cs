@@ -13,7 +13,7 @@ namespace Lair.HttpListenerConsole
         {
             var rawHttpHandler = new RawHttpHandler();
             AsyncHttpListener asyncHttpListener = new Lair.HttpListener.AsyncHttpListener(rawHttpHandler);
-            asyncHttpListener.Initialize(new string[] { "http://+:8082" }, 5000);
+            asyncHttpListener.Initialize(new string[] { "http://+:8082/", "https://+:8083/" }, 5000);
             asyncHttpListener.Start();
 
             Console.WriteLine("Listening...");
