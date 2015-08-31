@@ -21,7 +21,8 @@ namespace Lair.HttpListener
 
             process.Start();
             process.WaitForExit();
-
+            
+            Debug.WriteLine(process.StandardOutput.ReadToEnd());
             return process.ExitCode == 0;
         }
 
@@ -34,6 +35,8 @@ namespace Lair.HttpListener
                     Verb = "runas",
                     Arguments = args,
                     FileName = file,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
                 }
             };
         }

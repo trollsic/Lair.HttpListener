@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,14 +27,28 @@ namespace Lair.HttpListener
 
             foreach (string prefix in prefixes)
             {
+                string uriPrefix = null;
+
                 if (!prefix.EndsWith("/"))
                 {
-                    this.listener.Prefixes.Add(prefix + "/");
+                    uriPrefix = prefix + "/";
                 }
                 else
                 {
-                    this.listener.Prefixes.Add(prefix);
+                    uriPrefix = prefix;
                 }
+
+                if (!NetSh.AddUrlAcl(uriPrefix, WindowsIdentity.GetCurrent().Name))
+                {
+                    NetSh.DeleteUrlAcl(uriPrefix, WindowsIdentity.GetCurrent().Name);
+
+                    if (!NetSh.AddUrlAcl(uriPrefix, WindowsIdentity.GetCurrent().Name))
+                    {
+                        throw new Exception(string.Format("failed to register {0} prefix", uriPrefix));
+                    }
+                }
+
+                this.listener.Prefixes.Add(uriPrefix);
             }
 
             if (requestQueueLength > 0)
